@@ -65,7 +65,12 @@ jobs:
           GODLIKE_ID_INPUT: ${{ github.event.inputs.accounts }}
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-        run: python renew.py
+        run: |
+          python renew.py || {
+            code=$?
+            echo "::warning::续订脚本失败，退出码 ${code}；本 workflow 按成功结束以避免 GitHub Actions 失败邮件。"
+            exit 0
+          }
 
       - name: 上传截图
         if: always()
